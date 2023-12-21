@@ -1,0 +1,4 @@
+nextcord[speed]
+requests
+beautifulsoup4
+pillow

@@ -1,0 +1,4 @@
+__pycache__/
+/src/database/*
+!/src/database/Hackercat.png
+config.json
