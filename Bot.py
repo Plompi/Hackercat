@@ -30,7 +30,7 @@ async def on_message(message):
 async def Gallery(interaction: discord.Interaction):
     if interaction.user.id in CG.ADMINS.values():
         embed, image = IM.get_Image(1)
-        await interaction.response.send_message(view = Menu(interaction.user, IM), embed = embed, file = image)
+        await interaction.response.send_message(view = GalleryMenu(interaction.user, IM), embed = embed, file = image)
     else:
         await interaction.response.send_message('You dont have the Admin Permission')
 
@@ -138,4 +138,13 @@ async def Coin(interaction: discord.Interaction, site: str = SlashOption(name = 
     else:
         await interaction.response.send_message('you lost :(')
 
+
+@bot.slash_command(name = 'secretsanta', description = 'Start a Secret Santa event')
+async def SecretSanta(interaction : discord.Interaction, limit: int = float('inf')):
+    role = discord.utils.get(interaction.guild.roles, name="Elf")
+    if role is None:
+        role = await interaction.guild.create_role(name="Elf", color = discord.Color.from_rgb(40,190,60))
+    await interaction.response.send_message(view = SecretSantaMenu(role, limit, interaction.user))
+
+    
 bot.run(CG.TOKEN)

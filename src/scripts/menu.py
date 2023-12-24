@@ -1,6 +1,7 @@
 import nextcord as discord
+from random import shuffle
 
-class Menu(discord.ui.View):
+class GalleryMenu(discord.ui.View):
     def __init__(self, author, ImageManager):
         super().__init__()
         self.image = 1
@@ -43,3 +44,32 @@ class Menu(discord.ui.View):
 
     async def interaction_check(self, interaction):
         return interaction.user.id == self.author.id
+
+class SecretSantaMenu(discord.ui.View):
+    def __init__(self, role, limit, author):
+        super().__init__()
+        self.role = role
+        self.limit = limit
+        self.author = author
+
+    @discord.ui.button(label = '🎁', style = discord.ButtonStyle.grey)
+    async def addRole(self, button, interaction):
+        if len(self.role.members) < self.limit and interaction.user not in self.role.members:
+            await interaction.user.add_roles(self.role)
+    
+    @discord.ui.button(label = '❌', style = discord.ButtonStyle.grey)
+    async def delRole(self, button, interaction):
+        if interaction.user in self.role.members:
+            await interaction.user.remove_roles(self.role)
+
+    @discord.ui.button(label = '🏁', style = discord.ButtonStyle.grey)
+    async def start(self, button, interaction):
+        if interaction.user == self.author:
+            x = self.role.members
+            shuffle(x)
+
+            for i in range(len(x)-1,-1,-1):
+                await x[i].send(f"You got {str(x[i-1])}")
+
+            await interaction.message.edit(content = "let the gift-giving begin", view = None)
+            self.stop()
