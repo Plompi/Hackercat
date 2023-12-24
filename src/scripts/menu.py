@@ -72,4 +72,5 @@ class SecretSantaMenu(discord.ui.View):
                 await x[i].send(f"You got {str(x[i-1])}")
 
             await interaction.message.edit(content = "let the gift-giving begin", view = None)
+            await self.role.delete()
             self.stop()
