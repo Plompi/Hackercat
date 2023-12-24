@@ -82,9 +82,9 @@ async def Poop(interaction: discord.Interaction, member: Member = None):
 
 
 @bot.slash_command(name = 'clean', description = 'Deletes the last x messages')
-async def Clean(interaction: discord.Interaction, number: int):
-    await interaction.response.send_message(f'The last {number} messages have been deleted')
-    await interaction.channel.purge(limit = number, before = interaction)
+async def Clean(interaction: discord.Interaction, number: int = float('inf'), botonly: bool = False):
+    await interaction.response.send_message('.')
+    await interaction.channel.purge(limit = number+1, check = lambda message: not botonly or message.author == bot.user)
 
 
 @bot.slash_command(name = 'set', description = 'Sets the channel for uploading the database images')
@@ -141,10 +141,10 @@ async def Coin(interaction: discord.Interaction, site: str = SlashOption(name = 
 
 @bot.slash_command(name = 'secretsanta', description = 'Start a Secret Santa event')
 async def SecretSanta(interaction : discord.Interaction, limit: int = float('inf')):
-    role = discord.utils.get(interaction.guild.roles, name="Elf")
+    role = discord.utils.get(interaction.guild.roles, name='Elf')
     if role is None:
-        role = await interaction.guild.create_role(name="Elf", color = discord.Color.from_rgb(40,190,60))
-    await interaction.response.send_message(view = SecretSantaMenu(role, limit, interaction.user))
+        role = await interaction.guild.create_role(name='Elf', color = discord.Color.from_rgb(40,190,60))
+    await interaction.response.send_message(view = SecretSantaMenu(role, limit, interaction.user), content = f'0/{limit} members participate')
 
     
 bot.run(CG.TOKEN)

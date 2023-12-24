@@ -52,25 +52,27 @@ class SecretSantaMenu(discord.ui.View):
         self.limit = limit
         self.author = author
 
-    @discord.ui.button(label = '🎁', style = discord.ButtonStyle.grey)
+    @discord.ui.button(label = 'join', style = discord.ButtonStyle.green)
     async def addRole(self, button, interaction):
         if len(self.role.members) < self.limit and interaction.user not in self.role.members:
             await interaction.user.add_roles(self.role)
+            await interaction.message.edit(content = f'{len(self.role.members)}/{self.limit} members participate')
     
-    @discord.ui.button(label = '❌', style = discord.ButtonStyle.grey)
+    @discord.ui.button(label = 'leave', style = discord.ButtonStyle.red)
     async def delRole(self, button, interaction):
         if interaction.user in self.role.members:
             await interaction.user.remove_roles(self.role)
+            await interaction.message.edit(content = f'{len(self.role.members)}/{self.limit} members participate')
 
-    @discord.ui.button(label = '🏁', style = discord.ButtonStyle.grey)
+    @discord.ui.button(label = '🎁', style = discord.ButtonStyle.grey)
     async def start(self, button, interaction):
         if interaction.user == self.author:
             x = self.role.members
             shuffle(x)
 
             for i in range(len(x)-1,-1,-1):
-                await x[i].send(f"You got {str(x[i-1])}")
+                await x[i].send(f'You got {str(x[i-1])}')
 
-            await interaction.message.edit(content = "let the gift-giving begin", view = None)
+            await interaction.message.edit(content = 'let the gift-giving begin', view = None)
             await self.role.delete()
             self.stop()
