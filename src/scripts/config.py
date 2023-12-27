@@ -9,6 +9,9 @@ class Config:
         self.IMAGE_PATH = os.path.join(self.path, 'img')
         self.initial_config()
 
+    def all_extensions(self):
+        return [f'src.extensions.{ext[:-3]}' for ext in os.listdir(os.path.join(self.path, 'extensions')) if ext.endswith('.py')]
+
     def save(func):
         def wrapper(self, *args, **kwargs):
             result = func(self, *args, **kwargs)
@@ -30,13 +33,17 @@ class Config:
             self.data = {   'TOKEN': f'{self.TOKEN}',
                             'DATABASE_DISCORD_CHANNEL_ID': None,
                             'ADMINS': {},
-                            'OWNER':{}}
+                            'OWNER':{},
+                            'EXTENSIONS': [all_extensions()],
+                            'MENUS': {}}
     
     def load_config(self):
         self.TOKEN = self.data['TOKEN']
         self.DATABASE_DISCORD_CHANNEL_ID = self.data['DATABASE_DISCORD_CHANNEL_ID']
         self.ADMINS = self.data['ADMINS']
         self.OWNER = self.data['OWNER']
+        self.MENU = self.data['MENUS']
+        self.EXTENSIONS = self.data['EXTENSIONS']
 
     def save_config(self):
         with open(self.config_json_path, 'w') as config_file:
@@ -58,3 +65,14 @@ class Config:
     @save
     def set_channel(self, channel):
         self.data['DATABASE_DISCORD_CHANNEL_ID'] = channel.id
+
+    @save
+    def set_menu(self, name, *args):
+        self.data['MENUS'][name] = args
+
+    @save
+    def toggle_extension(self, name):
+        if name in self.data['EXTENSIONS']:
+            self.data['EXTENSIONS'].remove(name)
+        else:
+            self.data['EXTENSIONS'].append(name)

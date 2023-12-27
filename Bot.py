@@ -2,7 +2,7 @@ import nextcord as discord
 from nextcord import Member, SlashOption
 from nextcord.ext import commands
 from random import randint, choice
-import os
+import os,sys
 from PIL import Image as PilImage, ImageDraw
 from io import BytesIO
 from src.scripts.config import *
@@ -13,9 +13,13 @@ bot = commands.Bot(command_prefix = '!', intents = discord.Intents.all(), case_i
 CG = Config()
 IM = ImageManager(bot, CG.DATABASE_PATH, CG.DATABASE_DISCORD_CHANNEL_ID)
 
+def load_extensions():
+    for ext in CG.EXTENSIONS:
+        bot.load_extension(ext, extras={'CG' : CG})
 
 @bot.event
 async def on_ready():
+    loadPersistentMenus(bot, CG)
     if CG.DATABASE_DISCORD_CHANNEL_ID:
         await IM.read_historical_messages()
 
@@ -24,6 +28,11 @@ async def on_ready():
 async def on_message(message):
     if message.channel.id == CG.DATABASE_DISCORD_CHANNEL_ID and message.author != bot.user:
         await IM.read_historical_messages()
+
+
+@bot.slash_command(name = 'extensions', description = 'Manage the Bot Extensions')
+async def Extensions(interaction: discord.Interaction):
+    await interaction.response.send_message(view = ExtensionMenu(CG), content = 'Select an Extension to enable/disable')
 
 
 @bot.slash_command(name = 'gallery', description = 'All Images at a glance')
@@ -138,13 +147,5 @@ async def Coin(interaction: discord.Interaction, site: str = SlashOption(name = 
     else:
         await interaction.response.send_message('you lost :(')
 
-
-@bot.slash_command(name = 'secretsanta', description = 'Start a Secret Santa event')
-async def SecretSanta(interaction : discord.Interaction, limit: int = float('inf')):
-    role = discord.utils.get(interaction.guild.roles, name='Elf')
-    if role is None:
-        role = await interaction.guild.create_role(name='Elf', color = discord.Color.from_rgb(40,190,60))
-    await interaction.response.send_message(view = SecretSantaMenu(role, limit, interaction.user), content = f'0/{limit} members participate')
-
-    
+load_extensions()
 bot.run(CG.TOKEN)

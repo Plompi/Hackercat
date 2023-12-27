@@ -1,5 +1,11 @@
 import nextcord as discord
-from random import shuffle
+from random import shuffle, randint
+import os, sys
+
+def loadPersistentMenus(bot, CG):
+    guild = discord.utils.get(bot.guilds, name=CG.MENU['secretsanta'][0])
+    role = discord.utils.get(guild.roles, name='Elf')
+    bot.add_view(SecretSantaMenu(role,CG.MENU['secretsanta'][1],CG.MENU['secretsanta'][2]))
 
 class GalleryMenu(discord.ui.View):
     def __init__(self, author, ImageManager):
@@ -43,30 +49,38 @@ class GalleryMenu(discord.ui.View):
         await self.handle_button_click(interaction, deletion = True)
 
     async def interaction_check(self, interaction):
-        return interaction.user.id == self.author.id
+        return interaction.user.id == self.author.id  
 
 class SecretSantaMenu(discord.ui.View):
     def __init__(self, role, limit, author):
-        super().__init__()
+        super().__init__(timeout=None)
         self.role = role
         self.limit = limit
         self.author = author
 
-    @discord.ui.button(label = 'join', style = discord.ButtonStyle.green)
+    @discord.ui.button(label = 'join', style = discord.ButtonStyle.green, custom_id='joinButton')
     async def addRole(self, button, interaction):
-        if len(self.role.members) < self.limit and interaction.user not in self.role.members:
-            await interaction.user.add_roles(self.role)
-            await interaction.message.edit(content = f'{len(self.role.members)}/{self.limit} members participate')
+        if self.limit:
+            if len(self.role.members) < self.limit and interaction.user not in self.role.members:
+                await interaction.user.add_roles(self.role)
+                await interaction.message.edit(content = f'{len(self.role.members)}/{self.limit} member(s) participate')
+        else:
+            if interaction.user not in self.role.members:
+                await interaction.user.add_roles(self.role)
+                await interaction.message.edit(content = f'{len(self.role.members)} member(s) participate')
     
-    @discord.ui.button(label = 'leave', style = discord.ButtonStyle.red)
+    @discord.ui.button(label = 'leave', style = discord.ButtonStyle.red, custom_id='leaveButton')
     async def delRole(self, button, interaction):
-        if interaction.user in self.role.members:
+        if interaction.user in self.role.members:    
             await interaction.user.remove_roles(self.role)
-            await interaction.message.edit(content = f'{len(self.role.members)}/{self.limit} members participate')
+            if self.limit:
+                await interaction.message.edit(content = f'{len(self.role.members)}/{self.limit} member(s) participate')
+            else:
+                await interaction.message.edit(content = f'{len(self.role.members)} member(s) participate')
 
-    @discord.ui.button(label = '🎁', style = discord.ButtonStyle.grey)
+    @discord.ui.button(label = '🎁', style = discord.ButtonStyle.grey, custom_id='startButton')
     async def start(self, button, interaction):
-        if interaction.user == self.author:
+        if interaction.user.id == self.author:
             x = self.role.members
             shuffle(x)
 
@@ -76,3 +90,29 @@ class SecretSantaMenu(discord.ui.View):
             await interaction.message.edit(content = 'let the gift-giving begin', view = None)
             await self.role.delete()
             self.stop()
+
+
+class ExtensionMenu(discord.ui.View):
+    def __init__(self, CG):
+        super().__init__(timeout = 600)
+        self.add_item(ExtensionSelectMenu(CG, self))
+
+class ExtensionSelectMenu(discord.ui.Select):
+    def __init__(self, CG, view):
+        self.Selectview = view
+        self.CG = CG
+        options = [ discord.SelectOption(label = ext[15:], emoji = '✅' if ext in self.CG.EXTENSIONS else '❌')
+                    for ext in self.CG.all_extensions()]
+        options.append(discord.SelectOption(label = 'Restart Bot to apply Changes', value = 'Restart', emoji = '🔄'))
+        super().__init__(placeholder = 'Select Extension', min_values = 1, max_values = 1, options = options)
+
+    async def callback(self, interaction):
+        if self.values[0] == 'Restart':
+            await interaction.message.delete()
+            path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'Bot.py')
+            os.execl(sys.executable, sys.executable, path)
+        else:
+            self.CG.toggle_extension(f'src.extensions.{self.values[0]}')
+            await interaction.message.edit(view = ExtensionMenu(self.CG))
+            self.Selectview.stop()
+    
