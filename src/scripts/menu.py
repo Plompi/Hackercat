@@ -1,5 +1,5 @@
 import nextcord as discord
-from random import shuffle, randint
+from random import shuffle
 import os, sys
 
 def loadPersistentMenus(bot, CG):
