@@ -23,7 +23,6 @@ class ProfileMorph(commands.Cog):
         await interaction.response.send_message(file = discord.File(result_bytesio, filename = 'result.png'))
         result_bytesio.close()
 
-
     @discord.slash_command(name = 'poop', description = 'Someone has to clean the toilet')
     async def Poop(self, interaction: discord.Interaction, member: discord.Member = None):
         if not member:

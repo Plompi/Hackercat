@@ -2,11 +2,6 @@ import nextcord as discord
 from random import shuffle
 import os, sys
 
-def loadPersistentMenus(bot, CG):
-    guild = discord.utils.get(bot.guilds, name=CG.MENU['secretsanta'][0])
-    role = discord.utils.get(guild.roles, name='Elf')
-    bot.add_view(SecretSantaMenu(role,CG.MENU['secretsanta'][1],CG.MENU['secretsanta'][2]))
-
 class GalleryMenu(discord.ui.View):
     def __init__(self, author, ImageManager):
         super().__init__()

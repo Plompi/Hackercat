@@ -1,22 +1,9 @@
 import nextcord as discord
 from nextcord.ext import commands
-from src.scripts.config import *
-from src.scripts.manager import *
-from src.scripts.menu import *
+from src.scripts.menu import ExtensionMenu
 from src.scripts.checks import *
 
 bot = commands.Bot(command_prefix = '!', intents = discord.Intents.all(), case_insensitive = True)
-IM = ImageManager(bot, CG.DATABASE_PATH, CG.DATABASE_DISCORD_CHANNEL_ID)
-
-def load_extensions():
-    for ext in CG.EXTENSIONS:
-        bot.load_extension(ext)
-
-
-@bot.event
-async def on_ready():
-    loadPersistentMenus(bot, CG)
-
 
 @bot.event
 async def on_application_command_error(interaction, error):
@@ -60,5 +47,6 @@ async def Admin(interaction: discord.Interaction, user: discord.User, option: st
 
 
 if __name__ == '__main__':
-    load_extensions()
+    for ext in CG.EXTENSIONS:
+        bot.load_extension(ext)
     bot.run(CG.TOKEN)
