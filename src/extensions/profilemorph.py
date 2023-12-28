@@ -1,14 +1,13 @@
 import nextcord as discord
 from nextcord.ext import commands
 from PIL import Image as PilImage, ImageDraw
+from src.scripts.checks import *
 from io import BytesIO
 import os
 
 class ProfileMorph(commands.Cog):
-    def __init__(self, bot, CG, IM):
+    def __init__(self, bot):
         self.bot = bot
-        self.CG = CG
-        self.IM = IM
 
     @discord.slash_command(name = 'bonk', description = 'Bonk someone right over the head')
     async def Bonk(self, interaction: discord.Interaction, member: discord.Member = None):
@@ -17,7 +16,7 @@ class ProfileMorph(commands.Cog):
 
         result_bytesio = BytesIO()
         Profilepic = PilImage.open(BytesIO(await member.avatar.read())).resize((200, 200))
-        result = PilImage.open(os.path.join(self.CG.IMAGE_PATH,'bonk.jpg')).copy()
+        result = PilImage.open(os.path.join(CG.IMAGE_PATH,'bonk.jpg')).copy()
         result.paste(Profilepic, (480, 165))
         result.save(result_bytesio, format = 'PNG')
         result_bytesio.seek(0)
@@ -39,7 +38,7 @@ class ProfileMorph(commands.Cog):
         temp = PilImage.new('RGBA', Profilepic.size, (255, 255, 255, 0))
         temp.paste(Profilepic.convert('RGBA'), mask = mask)
 
-        result = PilImage.open(os.path.join(self.CG.IMAGE_PATH,'toilet.png')).copy()
+        result = PilImage.open(os.path.join(CG.IMAGE_PATH,'toilet.png')).copy()
         result.paste(temp, (910, 340), temp)
         result.save(result_bytesio, format = 'PNG')
         result_bytesio.seek(0)
@@ -47,5 +46,5 @@ class ProfileMorph(commands.Cog):
         result_bytesio.close()
 
 
-def setup(bot, CG, IM):
-    bot.add_cog(ProfileMorph(bot, CG, IM))
+def setup(bot):
+    bot.add_cog(ProfileMorph(bot))

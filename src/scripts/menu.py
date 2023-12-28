@@ -93,26 +93,26 @@ class SecretSantaMenu(discord.ui.View):
 
 
 class ExtensionMenu(discord.ui.View):
-    def __init__(self, CG):
+    def __init__(self, CG, author):
         super().__init__(timeout = 600)
+        self.author = author
         self.add_item(ExtensionSelectMenu(CG, self))
 
 class ExtensionSelectMenu(discord.ui.Select):
     def __init__(self, CG, view):
         self.Selectview = view
         self.CG = CG
-        options = [ discord.SelectOption(label = ext[15:], emoji = '✅' if ext in self.CG.EXTENSIONS else '❌')
-                    for ext in self.CG.all_extensions()]
-        options.append(discord.SelectOption(label = 'Restart Bot to apply Changes', value = 'Restart', emoji = '🔄'))
+        options = [discord.SelectOption(label='Restart Bot to apply Changes', value='Restart', emoji='🔄')] + [discord.SelectOption(label=ext[15:], emoji='✅' if ext in self.CG.EXTENSIONS else '❌') for ext in self.CG.all_extensions()]
         super().__init__(placeholder = 'Select Extension', min_values = 1, max_values = 1, options = options)
 
     async def callback(self, interaction):
-        if self.values[0] == 'Restart':
-            await interaction.message.delete()
-            path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'Bot.py')
-            os.execl(sys.executable, sys.executable, path)
-        else:
-            self.CG.toggle_extension(f'src.extensions.{self.values[0]}')
-            await interaction.message.edit(view = ExtensionMenu(self.CG))
-            self.Selectview.stop()
+        if interaction.user == self.Selectview.author:
+            if self.values[0] == 'Restart':
+                await interaction.message.delete()
+                path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'Bot.py')
+                os.execl(sys.executable, sys.executable, path)
+            else:
+                self.CG.toggle_extension(f'src.extensions.{self.values[0]}')
+                await interaction.message.edit(view = ExtensionMenu(self.CG, self.Selectview.author))
+                self.Selectview.stop()
     

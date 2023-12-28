@@ -57,10 +57,14 @@ class Config:
     @save
     def del_admin(self, user):
         del self.data['ADMINS'][user.name]
+
+    @save
+    def add_owner(self, user):
+        self.data['OWNER'][user.name] = user.id
         
     @save
-    def set_owner(self, user):
-        self.data['OWNER'] = {user.name:user.id}
+    def del_owner(self, user):
+        del self.data['OWNER'][user.name]
         
     @save
     def set_channel(self, channel):
