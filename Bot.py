@@ -3,12 +3,12 @@ from nextcord.ext import commands
 from src.scripts.menu import ExtensionMenu
 from src.scripts.checks import *
 
-bot = commands.Bot(command_prefix = '!', intents = discord.Intents.all(), case_insensitive = True)
+bot = commands.Bot(intents = discord.Intents.all())
 
 @bot.event
 async def on_application_command_error(interaction, error):
     if isinstance(error, discord.errors.ApplicationCheckFailure):
-        await interaction.response.send_message("You dont have Permission")
+        await interaction.response.send_message("You dont have Permission", ephemeral = True)
 
 
 @bot.slash_command(name = 'extensions', description = 'Manage the Bot Extensions')

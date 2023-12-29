@@ -7,7 +7,7 @@ class Config:
         self.config_json_path = os.path.join(self.path, os.path.join('config','config.json'))
         self.DATABASE_PATH = os.path.join(self.path, 'database')
         self.IMAGE_PATH = os.path.join(self.path, 'img')
-        self.initial_config()
+        self.load_config()
 
     def all_extensions(self):
         return [f'src.extensions.{ext[:-3]}' for ext in os.listdir(os.path.join(self.path, 'extensions')) if ext.endswith('.py')]
@@ -15,40 +15,39 @@ class Config:
     def save(func):
         def wrapper(self, *args, **kwargs):
             result = func(self, *args, **kwargs)
-            self.save_config()
+            with open(self.config_json_path, 'w') as config_file:
+                json.dump(self.data, config_file, indent=4)
+            self.load_config()
             return result
         return wrapper
 
-    @save 
-    def initial_config(self):
+    
+    def load_config(self):
         try:
             with open(self.config_json_path, 'r') as config_file:
                 self.data = json.load(config_file)
 
         except FileNotFoundError:
-            self.TOKEN = str(input('Enter the Token of your Discord Bot:'))
             config_path = os.path.join(self.path, 'config')
             if not os.path.exists(config_path):
                 os.makedirs(config_path)
-            self.data = {   'TOKEN': f'{self.TOKEN}',
+            self.data = {   'TOKEN': str(input('Enter the Token of your Discord Bot:')),
                             'DATABASE_DISCORD_CHANNEL_ID': None,
                             'ADMINS': {},
                             'OWNER':{},
                             'EXTENSIONS': [all_extensions()],
                             'MENUS': {}}
-    
-    def load_config(self):
-        self.TOKEN = self.data['TOKEN']
-        self.DATABASE_DISCORD_CHANNEL_ID = self.data['DATABASE_DISCORD_CHANNEL_ID']
-        self.ADMINS = self.data['ADMINS']
-        self.OWNER = self.data['OWNER']
-        self.MENU = self.data['MENUS']
-        self.EXTENSIONS = self.data['EXTENSIONS']
 
-    def save_config(self):
-        with open(self.config_json_path, 'w') as config_file:
-            json.dump(self.data, config_file, indent = 4)
-        self.load_config()
+            with open(self.config_json_path, 'w') as config_file:
+                json.dump(self.data, config_file, indent=4)
+
+        finally:
+            self.TOKEN = self.data['TOKEN']
+            self.DATABASE_DISCORD_CHANNEL_ID = self.data['DATABASE_DISCORD_CHANNEL_ID']
+            self.ADMINS = self.data['ADMINS']
+            self.OWNER = self.data['OWNER']
+            self.MENU = self.data['MENUS']
+            self.EXTENSIONS = self.data['EXTENSIONS']
     
     @save
     def add_admin(self, user):
