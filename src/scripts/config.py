@@ -35,7 +35,7 @@ class Config:
                             'DATABASE_DISCORD_CHANNEL_ID': None,
                             'ADMINS': {},
                             'OWNER':{},
-                            'EXTENSIONS': [all_extensions()],
+                            'EXTENSIONS': self.all_extensions(),
                             'MENUS': {}}
 
             with open(self.config_json_path, 'w') as config_file:

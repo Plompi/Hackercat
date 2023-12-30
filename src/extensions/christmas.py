@@ -21,7 +21,7 @@ class Christmas(commands.Cog):
             role = await interaction.guild.create_role(name = 'Elf', color = discord.Color.from_rgb(40, 190, 60))
 
         view = SecretSantaMenu(role, limit, interaction.user.id)
-        content = f'{len(role.members)}{f'/{limit}' if limit else ''} member(s) participate'
+        content = f'{len(role.members)}{f"/{limit}" if limit else ""} member(s) participate'
         CG.set_menu('secretsanta', str(role.guild), limit, interaction.user.id)
         await interaction.response.send_message(view = view, content = content)
 
