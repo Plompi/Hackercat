@@ -9,9 +9,10 @@ class Christmas(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        guild = discord.utils.get(self.bot.guilds, name = CG.MENU['secretsanta'][0])
-        role = discord.utils.get(guild.roles, name = 'Elf')
-        self.bot.add_view(SecretSantaMenu(role, CG.MENU['secretsanta'][1], CG.MENU['secretsanta'][2]))
+        if 'secretsanta' in CG.MENU:
+            guild = discord.utils.get(self.bot.guilds, name = CG.MENU['secretsanta'][0])
+            role = discord.utils.get(guild.roles, name = 'Elf')
+            self.bot.add_view(SecretSantaMenu(role, CG.MENU['secretsanta'][1], CG.MENU['secretsanta'][2]))
 
     @discord.slash_command(name = 'secretsanta', description = 'Start a Secret Santa event')
     @is_admin()
