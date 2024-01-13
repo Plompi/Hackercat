@@ -9,10 +9,10 @@ class Christmas(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        if 'secretsanta' in CG.MENU:
-            guild = discord.utils.get(self.bot.guilds, name = CG.MENU['secretsanta'][0])
+        if 'secretsanta' in CG.INFOS:
+            guild = discord.utils.get(self.bot.guilds, name = CG.INFOS['secretsanta'][0])
             role = discord.utils.get(guild.roles, name = 'Elf')
-            self.bot.add_view(SecretSantaMenu(role, CG.MENU['secretsanta'][1], CG.MENU['secretsanta'][2]))
+            self.bot.add_view(SecretSantaMenu(role, CG.INFOS['secretsanta'][1], CG.INFOS['secretsanta'][2]))
 
     @discord.slash_command(name = 'secretsanta', description = 'Start a Secret Santa event')
     @is_admin()
@@ -23,7 +23,7 @@ class Christmas(commands.Cog):
 
         view = SecretSantaMenu(role, limit, interaction.user.id)
         content = f'{len(role.members)}{f"/{limit}" if limit else ""} member(s) participate'
-        CG.set_menu('secretsanta', str(role.guild), limit, interaction.user.id)
+        CG.set_infos('secretsanta', str(role.guild), limit, interaction.user.id)
         await interaction.response.send_message(view = view, content = content)
 
 

@@ -24,26 +24,30 @@ async def Update(interaction: discord.Interaction):
     await interaction.response.send_message('The config has been reloaded')
 
 
-@bot.slash_command(name = 'owner', description = 'Manage bot owners')
+@bot.user_command(name = 'own')
 @is_owner()
-async def Owner(interaction: discord.Interaction, user: discord.User, option: str = discord.SlashOption(name = 'option', choices = ['add', 'remove'])):
-    if option == 'add':
-        CG.add_owner(user)
-        await interaction.response.send_message(f'{user} is now a Hackercat owner')
-    else:
-        CG.del_owner(user)
-        await interaction.response.send_message(f'{user} is no longer a Hackercat owner')
+async def Own(interaction: discord.Interaction, member: discord.Member):
+    CG.add_owner(member)
+    await interaction.response.send_message(f'{member} is now a Hackercat owner')
 
-
-@bot.slash_command(name = 'admin', description = 'Manage bot admins')
+@bot.user_command(name = 'deown')
 @is_owner()
-async def Admin(interaction: discord.Interaction, user: discord.User, option: str = discord.SlashOption(name = 'option', choices = ['add', 'remove'])):
-    if option == 'add':
-        CG.add_admin(user)
-        await interaction.response.send_message(f'{user} is now a Hackercat')
-    else:
-        CG.del_admin(user)
-        await interaction.response.send_message(f'{user} is no longer a Hackercat')
+async def Deown(interaction: discord.Interaction, member: discord.Member):
+    CG.del_owner(member)
+    await interaction.response.send_message(f'{member} is no longer a Hackercat owner')
+
+@bot.user_command(name = 'op')
+@is_owner()
+async def Op(interaction: discord.Interaction, member: discord.Member):
+    CG.add_admin(member)
+    await interaction.response.send_message(f'{member} is now a Hackercat')
+
+@bot.user_command(name = 'deop')
+@is_owner()
+async def Deop(interaction: discord.Interaction, member: discord.Member):
+    CG.del_admin(member)
+    await interaction.response.send_message(f'{member} is no longer a Hackercat')
+    
 
 
 if __name__ == '__main__':

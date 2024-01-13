@@ -36,7 +36,7 @@ class Config:
                             'ADMINS': {},
                             'OWNER':{},
                             'EXTENSIONS': self.all_extensions(),
-                            'MENUS': {}}
+                            'INFOS': {}}
 
             with open(self.config_json_path, 'w') as config_file:
                 json.dump(self.data, config_file, indent=4)
@@ -46,7 +46,7 @@ class Config:
             self.DATABASE_DISCORD_CHANNEL_ID = self.data['DATABASE_DISCORD_CHANNEL_ID']
             self.ADMINS = self.data['ADMINS']
             self.OWNER = self.data['OWNER']
-            self.MENU = self.data['MENUS']
+            self.INFOS = self.data['INFOS']
             self.EXTENSIONS = self.data['EXTENSIONS']
     
     @save
@@ -70,8 +70,8 @@ class Config:
         self.data['DATABASE_DISCORD_CHANNEL_ID'] = channel.id
 
     @save
-    def set_menu(self, name, *args):
-        self.data['MENUS'][name] = args
+    def set_infos(self, name, *args):
+        self.data['INFOS'][name] = args
 
     @save
     def toggle_extension(self, name):
