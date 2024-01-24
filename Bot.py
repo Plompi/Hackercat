@@ -14,7 +14,7 @@ async def on_application_command_error(interaction, error):
 @bot.slash_command(name = 'extensions', description = 'Manage the Bot Extensions')
 @is_owner()
 async def Extensions(interaction: discord.Interaction):
-    await interaction.response.send_message(view = ExtensionMenu(CG, interaction.user), content = 'Select an Extension to enable/disable')
+    await interaction.response.send_message(view = ExtensionMenu(CG, interaction.user, bot), content = 'Select an Extension to enable/disable')
 
 
 @bot.slash_command(name = 'update', description = 'Update the config.json manually')
@@ -51,6 +51,5 @@ async def Deop(interaction: discord.Interaction, member: discord.Member):
 
 
 if __name__ == '__main__':
-    for ext in CG.EXTENSIONS:
-        bot.load_extension(ext)
+    bot.load_extensions(CG.EXTENSIONS)
     bot.run(CG.TOKEN)
