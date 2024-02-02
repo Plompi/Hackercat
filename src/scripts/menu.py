@@ -107,21 +107,7 @@ class ExtensionSelectMenu(discord.ui.Select):
                 await interaction.message.delete()
                 await self.bot.sync_application_commands() 
             else:
-                # await interaction.response.defer()
-                # cog = self.bot.get_cog(self.values[0].capitalize()) # currently doesnt Work with ServerManagment & ProfileMorph because of capitalization
-                extension = f'src.extensions.{self.values[0]}'
-                self.CG.toggle_extension(extension)
-                if extension in self.CG.EXTENSIONS:
-                    self.bot.load_extension(extension)
-                    # cog = self.bot.get_cog(self.values[0].capitalize())
-                else:
-                    self.bot.unload_extension(extension)
-
-                
-                
-                # cog_commands = cog.get_commands()
-                # await self.bot.sync_application_commands(data=cog_commands)
-
+                self.CG.toggle_extension(f'src.extensions.{self.values[0]}', self.bot)
                 await interaction.message.edit(view = ExtensionMenu(self.CG, self.Selectview.author, self.bot))
                 self.Selectview.stop()
     

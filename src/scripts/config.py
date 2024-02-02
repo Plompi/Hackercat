@@ -74,8 +74,10 @@ class Config:
         self.data['INFOS'][name] = args
 
     @save
-    def toggle_extension(self, name):
+    def toggle_extension(self, name, bot):
         if name in self.data['EXTENSIONS']:
             self.data['EXTENSIONS'].remove(name)
+            bot.unload_extension(name)
         else:
             self.data['EXTENSIONS'].append(name)
+            bot.load_extension(name)
