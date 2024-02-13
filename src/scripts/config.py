@@ -4,7 +4,7 @@ import os
 class Config:
     def __init__(self):
         self.path = os.path.dirname(os.path.dirname(__file__))
-        self.config_json_path = os.path.join(self.path, os.path.join('config','config.json'))
+        self.config_json_path = os.path.join(self.path, os.path.join('config', 'config.json'))
         self.DATABASE_PATH = os.path.join(self.path, 'database')
         self.IMAGE_PATH = os.path.join(self.path, 'img')
         self.load_config()
@@ -16,7 +16,7 @@ class Config:
         def wrapper(self, *args, **kwargs):
             result = func(self, *args, **kwargs)
             with open(self.config_json_path, 'w') as config_file:
-                json.dump(self.data, config_file, indent=4)
+                json.dump(self.data, config_file, indent = 4)
             self.load_config()
             return result
         return wrapper

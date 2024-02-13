@@ -19,7 +19,7 @@ class GalleryMenu(discord.ui.View):
             self.image = new_value
         if deletion:
             self.IM.del_Image(self.image)
-            self.image = max(1,min(self.IM.get_data_size(), self.image))
+            self.image = max(1, min(self.IM.get_data_size(), self.image))
         await self.update_message(interaction)
 
     @discord.ui.button(label = '❮❮', style = discord.ButtonStyle.grey)
@@ -28,11 +28,11 @@ class GalleryMenu(discord.ui.View):
 
     @discord.ui.button(label = '❮', style = discord.ButtonStyle.grey)
     async def prevImage(self, _, interaction):
-        await self.handle_button_click(interaction, new_value = max(1,self.image - 1))
+        await self.handle_button_click(interaction, new_value = max(1, self.image - 1))
 
     @discord.ui.button(label= '❯' , style = discord.ButtonStyle.grey)
     async def nextImage(self, _, interaction):
-        await self.handle_button_click(interaction, new_value = min(self.IM.get_data_size(),self.image + 1))
+        await self.handle_button_click(interaction, new_value = min(self.IM.get_data_size(), self.image + 1))
 
     @discord.ui.button(label = '❯❯', style = discord.ButtonStyle.grey)
     async def lastImage(self, _, interaction):
@@ -47,7 +47,7 @@ class GalleryMenu(discord.ui.View):
 
 class SecretSantaMenu(discord.ui.View):
     def __init__(self, role, limit, author):
-        super().__init__(timeout=None)
+        super().__init__(timeout = None)
         self.role = role
         self.limit = limit
         self.author = author
@@ -97,7 +97,7 @@ class ExtensionSelectMenu(discord.ui.Select):
         self.Selectview = view
         self.CG = CG
         self.bot = bot
-        options = [discord.SelectOption(label='save Changes', value='Restart', emoji='🔄')] + [discord.SelectOption(label=ext[15:], emoji='✅' if ext in self.CG.EXTENSIONS else '❌') for ext in self.CG.all_extensions()]
+        options = [discord.SelectOption(label = 'save Changes', value = 'Restart', emoji = '🔄')] + [discord.SelectOption(label = ext[15:], emoji = '✅' if ext in self.CG.EXTENSIONS else '❌') for ext in self.CG.all_extensions()]
         super().__init__(placeholder = 'Select Extension', min_values = 1, max_values = 1, options = options)
 
     async def callback(self, interaction):

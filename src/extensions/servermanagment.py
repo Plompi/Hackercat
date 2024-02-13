@@ -9,9 +9,9 @@ class ServerManagment(commands.Cog):
     @discord.slash_command(name = 'clean', description = 'Deletes the last x messages')
     @is_admin()
     async def Clean(self, interaction: discord.Interaction, number: int = float('inf'), botonly: bool = False, parameters: str = ''):
-        await interaction.response.defer(ephemeral=True)
+        await interaction.response.defer(ephemeral = True)
         
-        async for message in interaction.channel.history(limit=None):
+        async for message in interaction.channel.history(limit = None):
             if not number:
                 break
             if number and (botonly and message.author == self.bot.user or not botonly) and (parameters == '' or any(word in message.content for word in parameters.split())):

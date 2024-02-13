@@ -21,7 +21,7 @@ class ImageManager:
 
     def update_SORTEDDIR(self):
         self.SORTEDDIR = sorted(os.scandir(self.PATH), key = lambda x: x.stat().st_mtime)
-        self.data_size = len(self.SORTEDDIR)-1
+        self.data_size = len(self.SORTEDDIR) - 1
 
     def get_Image(self, image):
         name = self.SORTEDDIR[image].name
@@ -40,6 +40,7 @@ class ImageManager:
                 if attachment.filename in os.listdir(self.PATH):
                     continue
             
+                #print(attachment.url) //If cdn-url does not expire -> switch from local file storage to cdn
                 image = Image.open(BytesIO(await attachment.read())).convert('RGB')
                 image.save(f'{self.PATH}/{attachment.filename}', format = 'JPEG', optimize = True, quality = 20)
         await message.delete()
